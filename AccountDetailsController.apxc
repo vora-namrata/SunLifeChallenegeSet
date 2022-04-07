@@ -1,0 +1,25 @@
+public with sharing class AccountDetailsController {
+	@AuraEnabled
+    public static List<Account> getAccounts(String FilterAccount,String SortBy, String SortDirection){
+        //base query
+        String strQuery = 'select Id, Name,OwnerId,Owner.Name, Phone, Website,AnnualRevenue from Account where Industry=\'Financial Services\' ';
+        if(String.isNotBlank(FilterAccount)){
+            strQuery = strQuery+' and name like \'%'+FilterAccount+'%\' ';
+        }
+        //if the records are to be sorted
+        if(String.isNotBlank(SortBy)){
+            strQuery = strQuery+' order by '+SortBy;
+        }
+        //the sorting direction
+        if(String.isNotBlank(SortBy) && String.isNotBlank(SortDirection)){
+            strQuery = strQuery+ ' '+SortDirection;
+        }
+        return database.query(strQuery);
+    }
+    
+    @AuraEnabled
+    public static void saveAccounts(List<Account> lstAccounts){
+        if(!lstAccounts.isEmpty())
+            UPDATE lstAccounts;
+    }
+}
